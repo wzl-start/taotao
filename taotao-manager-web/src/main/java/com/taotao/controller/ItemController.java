@@ -32,11 +32,27 @@ public class ItemController {
         return layuiResult;
     }
 
-    @RequestMapping("/deleteTtemPage")
+    @RequestMapping("/itemDelete")
     @ResponseBody
-    public TaotaoResult deleteTtemPage(@RequestBody List<TbItem> tbItem){
+    public TaotaoResult deleteTtemPage(@RequestBody List<TbItem> tbItems){
         Date date = new Date();
-        TaotaoResult taotaoResult = itemService.updateItem(tbItem,2,date);
+        TaotaoResult taotaoResult = itemService.updateItem(tbItems,2,date);
+        return taotaoResult;
+    }
+
+    @RequestMapping("/commodityUpperShelves")
+    @ResponseBody
+    public TaotaoResult commodityUpperShelves(@RequestBody List<TbItem> tbItems){
+        Date date = new Date();
+        TaotaoResult taotaoResult = itemService.updateItem(tbItems,1,date);
+        return taotaoResult;
+    }
+
+    @RequestMapping("/commodityLowerShelves")
+    @ResponseBody
+    public TaotaoResult commodityLowerShelves(@RequestBody List<TbItem> tbItems){
+        Date date = new Date();
+        TaotaoResult taotaoResult = itemService.updateItem(tbItems,0,date);
         return taotaoResult;
     }
 }

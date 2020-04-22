@@ -8,6 +8,7 @@ import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +38,23 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public TaotaoResult updateItem(List<TbItem> tbItem, int type, Date date) {
-        return null;
+    public TaotaoResult updateItem(List<TbItem> tbItems, int type, Date date) {
+        List<Long> ids = new ArrayList<Long>();
+        if (tbItems.size()<=0){
+            return TaotaoResult.build(500,"请先勾选在操作",null);
+        }
+        for (TbItem tbItem:tbItems) {
+            ids.add(tbItem.getId());
+        }
+        int count = tbItemMapper.updateItemByIds(ids,type,date);
+        if (count>0&&type==0){
+            return TaotaoResult.build(200,"商品下架成功",null);
+        }else if (count>0&&type==1){
+            return TaotaoResult.build(200,"商品上架成功",null);
+        }else if (count>0&&type==2){
+            return TaotaoResult.build(200,"商品删除成功",null);
+        }
+        return TaotaoResult.build(500,"商品修改失败",null);
     }
 
 }
