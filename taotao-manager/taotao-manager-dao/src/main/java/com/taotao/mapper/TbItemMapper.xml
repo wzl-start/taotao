@@ -9,4 +9,12 @@
         SELECT * FROM tbitem WHERE id = #{id}
     </select>
 
+    <select id="findTbItemByCount" resultType="int">
+        SELECT COUNT(*) FROM tbitem
+    </select>
+
+    <select id="findTbItemByPage" resultType="com.taotao.pojo.TbItem">
+        SELECT * FROM tbitem LIMIT #{index},#{pageSize}
+    </select>
+
 </mapper>

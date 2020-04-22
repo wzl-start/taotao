@@ -26,6 +26,16 @@ public class TbItem implements Serializable{
 
     private Date updated;
 
+    private LayuiResult layuiResult;
+
+	public LayuiResult getLayuiResult() {
+		return layuiResult;
+	}
+
+	public void setLayuiResult(LayuiResult layuiResult) {
+		this.layuiResult = layuiResult;
+	}
+
 	public Long getId() {
 		return id;
 	}
