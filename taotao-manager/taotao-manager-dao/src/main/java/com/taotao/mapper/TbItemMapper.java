@@ -15,4 +15,8 @@ public interface TbItemMapper {
     List<TbItem> findTbItemByPage(@Param("index")int index, @Param("pageSize")int pageSize);
 
     int updateItemByIds(@Param("ids")List<Long> ids, @Param("type")int type,@Param("date")Date date);
+
+    List<TbItem> findItemFuzzyQuery(@Param("page")Integer page, @Param("limit")Integer limit, @Param("title")String title, @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax,@Param("cId")Long cId);
+
+    int findFuzzyQueryCount(@Param("title")String title, @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax, @Param("cId")Long cId);
 }

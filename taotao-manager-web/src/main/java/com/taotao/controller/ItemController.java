@@ -1,8 +1,6 @@
 package com.taotao.controller;
 
-import com.taotao.pojo.LayuiResult;
-import com.taotao.pojo.TaotaoResult;
-import com.taotao.pojo.TbItem;
+import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,4 +53,14 @@ public class ItemController {
         TaotaoResult taotaoResult = itemService.updateItem(tbItems,0,date);
         return taotaoResult;
     }
+
+    @RequestMapping("/searchItem")
+    @ResponseBody
+    public LayuiResult searchItem(Integer page,Integer limit,String title,Integer priceMin,Integer priceMax,Long cId){
+        LayuiResult result = itemService.itemFuzzyQuery(page,limit,title,priceMin,priceMax,cId);
+        System.out.println(result);
+        return result;
+    }
+
+
 }

@@ -1,10 +1,9 @@
 package com.taotao.service.impl;
 
 import com.taotao.mapper.TbItemMapper;
-import com.taotao.pojo.LayuiResult;
-import com.taotao.pojo.TaotaoResult;
-import com.taotao.pojo.TbItem;
+import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,4 +56,23 @@ public class ItemServiceImpl implements ItemService {
         return TaotaoResult.build(500,"商品修改失败",null);
     }
 
+    @Override
+    public LayuiResult itemFuzzyQuery(Integer page, Integer limit, String title, Integer priceMin, Integer priceMax,Long cId) {
+        if (priceMin == null){
+            priceMin = 0;
+        }
+        if (priceMax == null){
+            priceMax = 1000000;
+        }
+        LayuiResult layuiResult = new LayuiResult();
+        layuiResult.setCode(0);
+        layuiResult.setMsg("");
+        int count = tbItemMapper.findFuzzyQueryCount(title,priceMin,priceMax,cId);
+        layuiResult.setCount(count);
+
+        List<TbItem> data = tbItemMapper.findItemFuzzyQuery(page,limit,title,priceMin,priceMax,cId);
+        System.out.println(data);
+        layuiResult.setData(data);
+        return layuiResult;
+    }
 }

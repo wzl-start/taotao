@@ -26,4 +26,31 @@
         </where>
     </update>
 
+    <select id="findItemFuzzyQuery" resultType="com.taotao.pojo.TbItem">
+        SELECT * FROM tbitem
+        <where>
+            <if test="title != ''">
+                and title LIKE "%${title}%" AND
+            </if>
+            price BETWEEN #{priceMin} AND #{priceMax}
+            <if test="cId !=null">
+                AND cId = #{cId}
+            </if>
+        </where>
+        LIMIT #{page},#{limit}
+    </select>
+
+    <select id="findFuzzyQueryCount" resultType="int">
+        SELECT COUNT(*) FROM tbitem
+        <where>
+            <if test="title!=''">
+                and title LIKE "%${title}%" AND
+            </if>
+            price BETWEEN #{priceMin} AND #{priceMax}
+            <if test="cId!=null">
+                and cId = #{cId}
+            </if>
+        </where>
+    </select>
+
 </mapper>
