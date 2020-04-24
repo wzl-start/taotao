@@ -5,7 +5,10 @@ import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -62,5 +65,22 @@ public class ItemController {
         return result;
     }
 
+    @RequestMapping("/fileUpload")
+    @ResponseBody
+    public PictureResult fileUpload(MultipartFile file) throws IOException {
+        String filename = file.getOriginalFilename();
+        file.transferTo(new File("D://",filename));
+        return null;
+    }
+
+
+
+    /*@RequestMapping("/addItem")
+    @ResponseBody
+    public TaotaoResult addItem(Long cId,String title,String sellPoint,Integer price,Integer num,String barcode,String file,String image){
+        TaotaoResult result = itemService.addItemBasicMsg();
+        return result;
+    }
+*/
 
 }
