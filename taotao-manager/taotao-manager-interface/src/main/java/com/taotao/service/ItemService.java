@@ -13,4 +13,6 @@ public interface ItemService {
     TaotaoResult updateItem(List<TbItem> tbItem, int type, Date date);
 
     LayuiResult itemFuzzyQuery(Integer page, Integer limit, String title, Integer priceMin, Integer priceMax,Long cId);
+
+    TaotaoResult addItemBasicMsg(Long cId,String title,String sellPoint,Integer price,Integer num,String barcode,String file,String image);
 }

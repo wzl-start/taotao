@@ -75,4 +75,13 @@ public class ItemServiceImpl implements ItemService {
         layuiResult.setData(data);
         return layuiResult;
     }
+
+    @Override
+    public TaotaoResult addItemBasicMsg(Long cId,String title,String sellPoint,Integer price,Integer num,String barcode,String file,String image) {
+        int count = tbItemMapper.addItemBasicMsg(cId,title,sellPoint,price,num,barcode,file,image);
+        if (count<0){
+            return TaotaoResult.build(500,"添加商品失败",null);
+        }
+        return TaotaoResult.build(200,"添加商品成功",null);
+    }
 }
