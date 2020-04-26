@@ -1,12 +1,21 @@
 package com.taotao.service.impl;
 
+import com.aliyun.oss.HttpMethod;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.GeneratePresignedUrlRequest;
+import com.taotao.constant.OSSConstant;
+import com.taotao.mapper.TbItemDescMapper;
+import com.taotao.mapper.TbItemGroupMapper;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
+import com.taotao.utils.IDUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +25,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private TbItemMapper tbItemMapper;
+    @Autowired
+    private TbItemDescMapper tbItemDescMapper;
+    @Autowired
+    private TbItemGroupMapper tbItemGroupMapper;
 
     @Override
     public TbItem findItemById(Long itemId) {
@@ -77,11 +90,68 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public TaotaoResult addItemBasicMsg(Long cId,String title,String sellPoint,Integer price,Integer num,String barcode,String file,String image) {
-        int count = tbItemMapper.addItemBasicMsg(cId,title,sellPoint,price,num,barcode,file,image);
+    public TaotaoResult addItem(TbItem tbItem,String itemDesc) {
+        Long itemId = IDUtils.genItemId();
+        tbItem.setId(itemId);
+        Date date = new Date();
+        tbItem.setCreated(date);
+        tbItem.setStatus((byte)1);
+        tbItem.setUpdated(date);
+        int count = tbItemMapper.addItemBasicMsg(tbItem);
         if (count<0){
             return TaotaoResult.build(500,"添加商品失败",null);
         }
+        TbItemDesc tbItemDesc = new TbItemDesc();
+        tbItemDesc.setItemId(itemId);
+        tbItemDesc.setCreated(date);
+        tbItemDesc.setUpdated(date);
+        tbItemDesc.setItemDesc(itemDesc);
+        int count1 = tbItemDescMapper.addItemDesc(tbItemDesc);
+        if (count1<0){
+            return TaotaoResult.build(500,"添加商品描述信息失败",null);
+        }
+
         return TaotaoResult.build(200,"添加商品成功",null);
+    }
+
+    @Override
+    public PictureResult addPicture(String name, byte[] bytes) {
+        OSS ossClient = new OSSClientBuilder().build(OSSConstant.ENDPOINT, OSSConstant.ACCESSKEYID, OSSConstant.ACCESSKEYSECRET);
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        String newName = IDUtils.genImageName() + name.substring(name.lastIndexOf("."));
+        //上传图片
+        ossClient.putObject(OSSConstant.BUCKETNAME,OSSConstant.OBJECTNAME+newName,bis);
+
+        // 指定过期时间
+        Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
+        GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(OSSConstant.BUCKETNAME, OSSConstant.OBJECTNAME, HttpMethod.GET);
+        req.setExpiration(expiration);
+
+        String signedUrl = ossClient.generatePresignedUrl(req).toString();
+        PictureData data = new PictureData();
+        data.setSrc(signedUrl);
+        PictureResult pictureResult = new PictureResult();
+        pictureResult.setCode(0);
+        pictureResult.setMsg("");
+        pictureResult.setData(data);
+        // 关闭OSSClient。
+        ossClient.shutdown();
+        return pictureResult;
+    }
+
+    @Override
+    public ItemGroupResult showItemGroup(Long cId) {
+        List<ItemGroup> itemGroups = tbItemGroupMapper.findGroupByCId(cId);
+
+        for (ItemGroup itemGroup : itemGroups) {
+            List<ItemGroupKeys> itemGroupKeys = tbItemGroupMapper.findKeysByGroupId(itemGroup.getId());
+            itemGroup.setParamKeys(itemGroupKeys);
+        }
+
+        ItemGroupResult itemGroupResult = new ItemGroupResult();
+        itemGroupResult.setStatus(200);
+        itemGroupResult.setMsg("有规格参数模板");
+        itemGroupResult.setData(itemGroups);
+        return itemGroupResult;
     }
 }

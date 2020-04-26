@@ -53,8 +53,8 @@
         </where>
     </select>
 
-    <insert id="addItemBasicMsg">
-        INSERT INTO tbitem(id,title,sellPoint,price,num,barcode,image,cId,created,updated) VALUES (1,#{title},#{sellPoint},#{price},#{num},#{barcode},#{image},#{cId},"2019-12-19 15:14:38","2019-12-19 15:14:38");
+    <insert id="addItemBasicMsg" parameterType="com.taotao.pojo.TbItem">
+        INSERT INTO tbitem(id,title,sellPoint,price,num,barcode,image,cId,created,updated) VALUES (#{id},#{title},#{sellPoint},#{price},#{num},#{barcode},#{image},#{cId},#{created},#{updated});
     </insert>
 
 </mapper>

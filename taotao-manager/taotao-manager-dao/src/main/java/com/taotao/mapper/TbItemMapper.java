@@ -20,5 +20,5 @@ public interface TbItemMapper {
 
     int findFuzzyQueryCount(@Param("title")String title, @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax, @Param("cId")Long cId);
 
-    int addItemBasicMsg(@Param("cId")Long cId, @Param("title")String title, @Param("sellPoint")String sellPoint, @Param("price")Integer price, @Param("num")Integer num, @Param("barcode")String barcode, @Param("file")String file, @Param("image")String image);
+    int addItemBasicMsg(TbItem tbItem);
 }

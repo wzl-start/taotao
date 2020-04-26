@@ -14,5 +14,9 @@ public interface ItemService {
 
     LayuiResult itemFuzzyQuery(Integer page, Integer limit, String title, Integer priceMin, Integer priceMax,Long cId);
 
-    TaotaoResult addItemBasicMsg(Long cId,String title,String sellPoint,Integer price,Integer num,String barcode,String file,String image);
+    TaotaoResult addItem(TbItem tbItem,String itemDesc);
+
+    PictureResult addPicture(String name, byte[] bytes);
+
+    ItemGroupResult showItemGroup(Long cId);
 }

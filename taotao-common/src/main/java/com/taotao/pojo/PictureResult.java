@@ -1,8 +1,8 @@
 package com.taotao.pojo;
 
-import java.util.List;
+import java.io.Serializable;
 
-public class PictureResult {
+public class PictureResult implements Serializable{
     private int code;
     private String msg;
     private PictureData data;

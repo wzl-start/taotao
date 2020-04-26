@@ -1,6 +1,8 @@
 package com.taotao.pojo;
 
-public class PictureData {
+import java.io.Serializable;
+
+public class PictureData implements Serializable{
     private String src;
 
     public String getSrc() {
