@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.taotao.mapper.TbContentMapper">
+
+    <select id="findContentByCategoryId" resultType="com.taotao.pojo.TbContent">
+        SELECT * FROM tbcontent WHERE categoryId = #{categoryId} LIMIT #{index},#{limit}
+    </select>
+
+    <select id="findContentCount" resultType="int">
+        SELECT COUNT(*) FROM tbcontent WHERE categoryId = #{categoryId}
+    </select>
+
+    <delete id="deleteContentByCategoryId">
+        DELETE FROM tbcontent
+        <where>
+            <if test="tbContents!=null and tbContents.size>0">
+                <foreach collection="tbContents" open="id in(" close=")" separator="," item="tbContent">
+                    #{tbContent.id}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <insert id="addContent">
+        INSERT INTO tbcontent(categoryId, title, subTitle, titleDesc, url, pic, pic2, content, created, updated)
+        VALUES (#{categoryId},#{title},#{subTitle},#{titleDesc},#{url},#{pic},#{pic2},#{content},#{created},#{updated})
+    </insert>
+
+</mapper>

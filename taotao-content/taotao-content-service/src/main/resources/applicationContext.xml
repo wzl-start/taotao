@@ -40,7 +40,7 @@
         <property name="basePackage" value="com.taotao.mapper" />
     </bean>
 
-    <context:component-scan base-package="com.taotao.service"></context:component-scan>
+    <context:component-scan base-package="com.taotao.content.service"></context:component-scan>
 
     <!-- 事务管理器 -->
     <bean id="transactionManager"
@@ -66,17 +66,16 @@
     <!-- 切面 -->
     <aop:config>
         <aop:advisor advice-ref="txAdvice"
-                     pointcut="execution(* com.taotao.service.*.*(..))" />
+                     pointcut="execution(* com.taotao.content.service.*.*(..))" />
     </aop:config>
 
     <!-- 使用dubbo发布服务 -->
     <!-- 提供方应用信息，用于计算依赖关系 -->
-    <dubbo:application name="taotao-manager" />
+    <dubbo:application name="taotao-content" />
     <dubbo:registry protocol="zookeeper"
                     address="192.168.46.100:2181" />
     <!-- 用dubbo协议在20880端口暴露服务 -->
-    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="dubbo" port="20881" />
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="com.taotao.service.ItemService" ref="itemServiceImpl" />
-    <dubbo:service interface="com.taotao.service.ItemCatService" ref="itemCatServiceImpl" />
+    <dubbo:service interface="com.taotao.content.service.ItemContentService" ref="itemContentServiceImpl" />
 </beans>

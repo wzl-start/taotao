@@ -12,7 +12,7 @@
         <module>../taotao-manager</module>
         <module>../taotao-manager-web</module>
         <module>../taotao-portal-web</module>
-        <module>../taotao-portal-web</module>
+        <module>../taotao-content</module>
     </modules>
 
     <packaging>pom</packaging>

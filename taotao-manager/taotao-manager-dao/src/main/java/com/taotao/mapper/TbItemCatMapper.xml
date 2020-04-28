@@ -5,8 +5,8 @@
 
 <mapper namespace="com.taotao.mapper.TbItemCatMapper">
 
-    <select id="findTbItemCatByParentId" resultType="com.taotao.pojo.TbItemCat">
-        SELECT * FROM tbitemcat WHERE parentId = #{id};
+    <select id="findTbItemCatByParentId" resultType="com.taotao.pojo.TbContentCategory">
+        SELECT * FROM tbcontentcategory WHERE parentId = #{id};
     </select>
 
 </mapper>
