@@ -74,8 +74,9 @@
     <dubbo:application name="taotao-content" />
     <dubbo:registry protocol="zookeeper"
                     address="192.168.46.100:2181" />
+    <dubbo:consumer timeout="20000"></dubbo:consumer>
     <!-- 用dubbo协议在20880端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="20881" />
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="com.taotao.content.service.ItemContentService" ref="itemContentServiceImpl" />
+    <dubbo:service interface="com.taotao.content.service.ItemContentService" ref="itemContentServiceImpl" timeout="20000"/>
 </beans>

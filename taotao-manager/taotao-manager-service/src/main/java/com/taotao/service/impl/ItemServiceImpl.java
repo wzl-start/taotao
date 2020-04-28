@@ -118,18 +118,16 @@ public class ItemServiceImpl implements ItemService {
     public PictureResult addPicture(String name, byte[] bytes) {
         OSS ossClient = new OSSClientBuilder().build(OSSConstant.ENDPOINT, OSSConstant.ACCESSKEYID, OSSConstant.ACCESSKEYSECRET);
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        String newName = IDUtils.genImageName() + name.substring(name.lastIndexOf("."));
         //上传图片
-        ossClient.putObject(OSSConstant.BUCKETNAME,OSSConstant.OBJECTNAME+newName,bis);
+        ossClient.putObject(OSSConstant.BUCKETNAME,OSSConstant.OBJECTNAME+name,bis);
 
         // 指定过期时间
         Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
         GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(OSSConstant.BUCKETNAME, OSSConstant.OBJECTNAME, HttpMethod.GET);
         req.setExpiration(expiration);
 
-        String signedUrl = ossClient.generatePresignedUrl(req).toString();
         PictureData data = new PictureData();
-        data.setSrc(signedUrl);
+        data.setSrc("https://taotao-wzl.oss-cn-chengdu.aliyuncs.com/taotao-picture/"+name);
         PictureResult pictureResult = new PictureResult();
         pictureResult.setCode(0);
         pictureResult.setMsg("");

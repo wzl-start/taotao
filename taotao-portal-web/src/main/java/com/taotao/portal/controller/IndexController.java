@@ -23,8 +23,8 @@ public class IndexController {
     @RequestMapping("/index")
     public String showIndex(Model model){
         List<Ad1Node> nodes = itemContentService.showAd1Node();
-        String node = JsonUtils.objectToJson(nodes);
-        model.addAttribute("ad1",node);
+        String ad1 = JsonUtils.objectToJson(nodes);
+        model.addAttribute("ad1",ad1);
         return "index";
     }
 

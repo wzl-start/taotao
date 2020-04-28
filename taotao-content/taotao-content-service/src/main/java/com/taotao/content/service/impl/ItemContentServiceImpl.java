@@ -82,6 +82,20 @@ public class ItemContentServiceImpl implements ItemContentService{
 
     @Override
     public List<Ad1Node> showAd1Node() {
-        return null;
+        List<TbContent> tbContents = tbContentMapper.findContentByCategoryId(89L, 0, 10);
+        List<Ad1Node> nodes = new ArrayList<Ad1Node>();
+        for (TbContent content : tbContents) {
+            Ad1Node node = new Ad1Node();
+            node.setSrcB(content.getPic2());
+            node.setHeight(240);
+            node.setAlt(content.getTitleDesc());
+            node.setWidth(670);
+            node.setSrc(content.getPic());
+            node.setWidthB(550);
+            node.setHref(content.getUrl());
+            node.setHeightB(240);
+            nodes.add(node);
+        }
+        return nodes;
     }
 }
