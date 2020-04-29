@@ -8,10 +8,10 @@ import com.taotao.constant.OSSConstant;
 import com.taotao.mapper.TbItemDescMapper;
 import com.taotao.mapper.TbItemGroupMapper;
 import com.taotao.mapper.TbItemMapper;
+import com.taotao.mapper.TbItemParamMapper;
 import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
 import com.taotao.utils.IDUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,8 @@ public class ItemServiceImpl implements ItemService {
     private TbItemDescMapper tbItemDescMapper;
     @Autowired
     private TbItemGroupMapper tbItemGroupMapper;
+    @Autowired
+    private TbItemParamMapper tbItemParamMapper;
 
     @Override
     public TbItem findItemById(Long itemId) {
@@ -90,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public TaotaoResult addItem(TbItem tbItem,String itemDesc) {
+    public TaotaoResult addItem(TbItem tbItem,String itemDesc,String[] paramKeyIds,String[] paramValue) {
         Long itemId = IDUtils.genItemId();
         tbItem.setId(itemId);
         Date date = new Date();
@@ -111,6 +113,19 @@ public class ItemServiceImpl implements ItemService {
             return TaotaoResult.build(500,"添加商品描述信息失败",null);
         }
 
+        List<ItemParamValue> itemParamValues = new ArrayList<ItemParamValue>();
+        for (int i = 0; i < paramKeyIds.length; i++) {
+            ItemParamValue itemParamValue = new ItemParamValue();
+            itemParamValue.setItemId(itemId);
+            itemParamValue.setParamId(paramKeyIds[i]);
+            itemParamValue.setParamValue(paramValue[i]);
+            itemParamValues.add(itemParamValue);
+        }
+
+        int count2 = tbItemParamMapper.addParamValue(itemParamValues);
+        if (count2<0){
+            return TaotaoResult.build(500,"添加商品规格信息失败",null);
+        }
         return TaotaoResult.build(200,"添加商品成功",null);
     }
 

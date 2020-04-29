@@ -1,10 +1,14 @@
 package com.taotao.content.service.impl;
 
 import com.taotao.content.service.ItemContentService;
+import com.taotao.content.service.JedisClient;
 import com.taotao.mapper.TbContentCategoryMapper;
 import com.taotao.mapper.TbContentMapper;
 import com.taotao.pojo.*;
+import com.taotao.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +21,10 @@ public class ItemContentServiceImpl implements ItemContentService{
     private TbContentCategoryMapper tbContentCategoryMapper;
     @Autowired
     private TbContentMapper tbContentMapper;
+    @Autowired
+    private JedisClient jedisClient;
+    @Value("AD1")
+    private String AD1;
 
     @Override
     public List<ZtreeResult> showContentZtree(Long id) {
@@ -67,6 +75,7 @@ public class ItemContentServiceImpl implements ItemContentService{
         layuiResult.setCount(count);
         List<TbContent> data = tbContentMapper.findContentByCategoryId(categoryId,(page-1)*limit,limit);
         layuiResult.setData(data);
+        jedisClient.del(AD1);
         return layuiResult;
     }
 
@@ -76,12 +85,21 @@ public class ItemContentServiceImpl implements ItemContentService{
         tbContent.setCreated(date);
         tbContent.setUpdated(date);
         tbContentMapper.addContent(tbContent);
+        jedisClient.del(AD1);
 
         return TaotaoResult.build(200,"商品添加成功");
     }
 
     @Override
     public List<Ad1Node> showAd1Node() {
+
+        String json = jedisClient.get("AD1");
+        if (StringUtils.isNotBlank(json)){
+            List<Ad1Node> nodes = JsonUtils.jsonToPojo(json,List.class);
+            System.out.println("从缓存中获取");
+            return nodes;
+        }
+
         List<TbContent> tbContents = tbContentMapper.findContentByCategoryId(89L, 0, 10);
         List<Ad1Node> nodes = new ArrayList<Ad1Node>();
         for (TbContent content : tbContents) {
@@ -96,6 +114,9 @@ public class ItemContentServiceImpl implements ItemContentService{
             node.setHeightB(240);
             nodes.add(node);
         }
+        String object = JsonUtils.objectToJson(nodes);
+        jedisClient.set(AD1,object);
+        System.out.println("从数据库中获取");
         return nodes;
     }
 }

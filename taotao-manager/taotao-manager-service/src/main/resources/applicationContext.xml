@@ -39,6 +39,10 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.taotao.mapper" />
     </bean>
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+        <constructor-arg name="host" value="192.168.46.100"></constructor-arg>
+        <constructor-arg name="port" value="6379"></constructor-arg>
+    </bean>
 
     <context:component-scan base-package="com.taotao.service"></context:component-scan>
 
