@@ -86,7 +86,6 @@ public class ItemServiceImpl implements ItemService {
         layuiResult.setCount(count);
 
         List<TbItem> data = tbItemMapper.findItemFuzzyQuery(page,limit,title,priceMin,priceMax,cId);
-        System.out.println(data);
         layuiResult.setData(data);
         return layuiResult;
     }
@@ -153,18 +152,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemGroupResult showItemGroup(Long cId) {
+    public TaotaoResult showItemGroup(Long cId) {
         List<ItemGroup> itemGroups = tbItemGroupMapper.findGroupByCId(cId);
+        if (itemGroups == null ||itemGroups.size()==0){
+            return TaotaoResult.build(500,"没有规格参数模板请创建");
+        }
 
         for (ItemGroup itemGroup : itemGroups) {
             List<ItemGroupKeys> itemGroupKeys = tbItemGroupMapper.findKeysByGroupId(itemGroup.getId());
             itemGroup.setParamKeys(itemGroupKeys);
         }
 
-        ItemGroupResult itemGroupResult = new ItemGroupResult();
-        itemGroupResult.setStatus(200);
-        itemGroupResult.setMsg("有规格参数模板");
-        itemGroupResult.setData(itemGroups);
-        return itemGroupResult;
+        TaotaoResult result = new TaotaoResult();
+        result.setStatus(200);
+        result.setMsg("有规格参数模板");
+        result.setData(itemGroups);
+        return result;
     }
 }

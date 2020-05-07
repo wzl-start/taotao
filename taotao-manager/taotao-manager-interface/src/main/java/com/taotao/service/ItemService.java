@@ -18,5 +18,5 @@ public interface ItemService {
 
     PictureResult addPicture(String name, byte[] bytes);
 
-    ItemGroupResult showItemGroup(Long cId);
+    TaotaoResult showItemGroup(Long cId);
 }

@@ -34,6 +34,7 @@
     <dubbo:reference interface="com.taotao.service.ItemService" id="itemService" />
     <dubbo:reference interface="com.taotao.service.ItemCatService" id="itemCatService" />
     <dubbo:reference interface="com.taotao.content.service.ItemContentService" id="itemContentService" />
+    <dubbo:reference interface="com.taotao.search.service.SearchService" id="searchService" timeout="60000"/>
 
     <!-- 定义文件上传解析器 -->
     <bean id="multipartResolver"

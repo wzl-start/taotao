@@ -1,6 +1,7 @@
 package com.taotao.mapper;
 
 
+import com.taotao.pojo.SearchItem;
 import com.taotao.pojo.TbItem;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,4 +22,6 @@ public interface TbItemMapper {
     int findFuzzyQueryCount(@Param("title")String title, @Param("priceMin")Integer priceMin, @Param("priceMax")Integer priceMax, @Param("cId")Long cId);
 
     int addItemBasicMsg(TbItem tbItem);
+
+    List<SearchItem> findSearchItemAll();
 }

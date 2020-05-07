@@ -1,6 +1,6 @@
 package com.taotao.controller;
 
-import com.taotao.pojo.ItemGroupResult;
+import com.taotao.pojo.TaotaoResult;
 import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,9 +16,15 @@ public class ItemGroupController {
 
     @RequestMapping("/showItemGroup")
     @ResponseBody
-    public ItemGroupResult showItemGroup(Long cId){
-        ItemGroupResult itemGroupResult = itemService.showItemGroup(cId);
-        return itemGroupResult;
+    public TaotaoResult showItemGroup(Long cId){
+        TaotaoResult result = itemService.showItemGroup(cId);
+        return result;
     }
 
+    @RequestMapping("/addGroup")
+    @ResponseBody
+    public TaotaoResult addGroup(){
+
+        return null;
+    }
 }
