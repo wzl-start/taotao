@@ -13,4 +13,16 @@
         SELECT * FROM tbitemparamkey WHERE groupId = #{id}
     </select>
 
+    <insert id="addParamGroup">
+        INSERT INTO tbitemparamgroup(groupName,itemCatId) VALUES (#{groupName},#{cId})
+    </insert>
+
+    <select id="findParamGroupId" resultType="com.taotao.pojo.ItemParamGroup">
+        SELECT * FROM tbitemparamgroup WHERE groupName = #{groupName}
+    </select>
+
+    <insert id="addParamKey">
+        INSERT INTO tbitemparamkey(paramName, groupId) VALUES (#{key},#{id})
+    </insert>
+
 </mapper>

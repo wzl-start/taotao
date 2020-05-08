@@ -23,8 +23,8 @@ public class ItemGroupController {
 
     @RequestMapping("/addGroup")
     @ResponseBody
-    public TaotaoResult addGroup(){
-
-        return null;
+    public TaotaoResult addGroup(Long cId,String params){
+        TaotaoResult result = itemService.addItemGroup(cId,params);
+        return result;
     }
 }

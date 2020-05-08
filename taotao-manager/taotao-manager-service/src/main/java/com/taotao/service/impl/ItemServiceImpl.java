@@ -138,7 +138,6 @@ public class ItemServiceImpl implements ItemService {
             public Message createMessage(Session session) throws JMSException {
                 TextMessage textMessage = session.createTextMessage();
                 textMessage.setText(itemId+"");
-                System.out.println("11111");
                 return textMessage;
             }
         });
@@ -186,5 +185,25 @@ public class ItemServiceImpl implements ItemService {
         result.setMsg("有规格参数模板");
         result.setData(itemGroups);
         return result;
+    }
+
+    @Override
+    public TaotaoResult addItemGroup(Long cId, String params) {
+        String[] strings = params.split("clive");
+        int s = 0;
+        for (int i = 0; i < strings.length; i++) {
+            String[] splits = strings[i].split(",");
+            String groupName = splits[0];
+            s = tbItemGroupMapper.addParamGroup(groupName,cId);
+            ItemParamGroup itemParamGroup = tbItemGroupMapper.findParamGroupId(groupName);
+            for (int j = 1; j < splits.length; j++) {
+                String key = splits[j];
+                s = tbItemGroupMapper.addParamKey(key,itemParamGroup.getId());
+            }
+        }
+        if (s == 0){
+            return TaotaoResult.build(500,"添加规格参数模板失败");
+        }
+        return TaotaoResult.build(200,"添加规格参数模板成功");
     }
 }
