@@ -13,8 +13,11 @@ import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
 import com.taotao.utils.IDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
+import javax.jms.*;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +34,10 @@ public class ItemServiceImpl implements ItemService {
     private TbItemGroupMapper tbItemGroupMapper;
     @Autowired
     private TbItemParamMapper tbItemParamMapper;
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    @Autowired
+    private Destination destination;
 
     @Override
     public TbItem findItemById(Long itemId) {
@@ -92,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public TaotaoResult addItem(TbItem tbItem,String itemDesc,String[] paramKeyIds,String[] paramValue) {
-        Long itemId = IDUtils.genItemId();
+        final Long itemId = IDUtils.genItemId();
         tbItem.setId(itemId);
         Date date = new Date();
         tbItem.setCreated(date);
@@ -125,6 +132,17 @@ public class ItemServiceImpl implements ItemService {
         if (count2<0){
             return TaotaoResult.build(500,"添加商品规格信息失败",null);
         }
+
+        jmsTemplate.send(destination,new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                TextMessage textMessage = session.createTextMessage();
+                textMessage.setText(itemId+"");
+                System.out.println("11111");
+                return textMessage;
+            }
+        });
+
         return TaotaoResult.build(200,"添加商品成功",null);
     }
 

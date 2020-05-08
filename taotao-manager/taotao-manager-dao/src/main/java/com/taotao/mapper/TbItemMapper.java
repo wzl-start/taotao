@@ -24,4 +24,6 @@ public interface TbItemMapper {
     int addItemBasicMsg(TbItem tbItem);
 
     List<SearchItem> findSearchItemAll();
+
+    SearchItem findSearchItemById(@Param("id") Long id);
 }

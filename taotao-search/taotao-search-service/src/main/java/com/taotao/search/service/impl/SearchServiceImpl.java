@@ -110,4 +110,24 @@ public class SearchServiceImpl implements SearchService {
         }
         return null;
     }
+
+    @Override
+    public void addSearchItem(SearchItem searchItem) {
+        try {
+            SolrInputDocument document = new SolrInputDocument();
+            document.addField("id", searchItem.getId());
+            document.addField("item_title", searchItem.getTitle());
+            document.addField("item_sell_point", searchItem.getSellPoint());
+            document.addField("item_price", searchItem.getPrice());
+            document.addField("item_image", searchItem.getImage());
+            document.addField("item_category_name", searchItem.getCategoryName());
+            document.addField("item_desc", searchItem.getItemDesc());
+            solrServer.add(document);
+            solrServer.commit();
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

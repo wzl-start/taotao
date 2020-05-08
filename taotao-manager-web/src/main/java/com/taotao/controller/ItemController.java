@@ -69,7 +69,6 @@ public class ItemController {
     public PictureResult fileUpload(MultipartFile file) throws IOException {
         byte[] bytes = file.getBytes();
         PictureResult pictureResult = itemService.addPicture(file.getOriginalFilename(),bytes);
-        System.out.println(pictureResult.getData());
         return pictureResult;
     }
 
