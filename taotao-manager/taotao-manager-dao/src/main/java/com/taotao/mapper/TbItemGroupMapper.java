@@ -14,7 +14,7 @@ public interface TbItemGroupMapper {
 
     int addParamGroup(@Param("groupName")String groupName,@Param("cId")Long cId);
 
-    ItemParamGroup findParamGroupId(@Param("groupName")String groupName);
+    ItemParamGroup findParamGroupId(@Param("groupName")String groupName,@Param("cId")Long cId);
 
     int addParamKey(@Param("key")String key, @Param("id")int id);
 }

@@ -6,8 +6,9 @@ public class ItemGroupKeys implements Serializable {
     private int id;
     private String paramName;
     private int groupId;
-    private String paramGroup;
+    //private String paramGroup;
     private ItemGroup itemGroup;
+    private ItemParamValue itemParamValue;
 
     @Override
     public String toString() {
@@ -15,7 +16,6 @@ public class ItemGroupKeys implements Serializable {
                 "id=" + id +
                 ", paramName='" + paramName + '\'' +
                 ", groupId=" + groupId +
-                ", paramGroup='" + paramGroup + '\'' +
                 '}';
     }
 
@@ -43,11 +43,19 @@ public class ItemGroupKeys implements Serializable {
         this.groupId = groupId;
     }
 
-    public String getParamGroup() {
-        return paramGroup;
+    public ItemGroup getItemGroup() {
+        return itemGroup;
     }
 
-    public void setParamGroup(String paramGroup) {
-        this.paramGroup = paramGroup;
+    public void setItemGroup(ItemGroup itemGroup) {
+        this.itemGroup = itemGroup;
+    }
+
+    public ItemParamValue getItemParamValue() {
+        return itemParamValue;
+    }
+
+    public void setItemParamValue(ItemParamValue itemParamValue) {
+        this.itemParamValue = itemParamValue;
     }
 }

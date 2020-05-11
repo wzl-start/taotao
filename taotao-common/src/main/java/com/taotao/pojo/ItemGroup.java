@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ItemGroup implements Serializable{
-    private int id;
+    private Integer id;
     private String groupName;
     private Long itemCatId;
     private List<ItemGroupKeys> paramKeys;
@@ -15,7 +15,6 @@ public class ItemGroup implements Serializable{
                 "id=" + id +
                 ", groupName='" + groupName + '\'' +
                 ", itemCatId=" + itemCatId +
-                ", paramKeys=" + paramKeys +
                 '}';
     }
 

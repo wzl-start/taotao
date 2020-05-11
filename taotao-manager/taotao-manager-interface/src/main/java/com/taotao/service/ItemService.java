@@ -21,4 +21,10 @@ public interface ItemService {
     TaotaoResult showItemGroup(Long cId);
 
     TaotaoResult addItemGroup(Long cId, String params);
+
+    TbItem getItemById(Long itemId);
+
+    TbItemDesc getItemDescByItemId(Long itemId);
+
+    String findTbItemGroupByItemId(Long itemId);
 }

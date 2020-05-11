@@ -100,4 +100,43 @@
         WHERE a.id = #{id}
     </select>
 
+    <select id="findItemById" resultType="com.taotao.pojo.TbItem">
+        SELECT * FROM tbitem WHERE id = #{itemId}
+    </select>
+
+    <select id="findItemDescByItemId" resultType="com.taotao.pojo.TbItemDesc">
+        SELECT * FROM tbitemdesc WHERE itemId = #{itemId}
+    </select>
+
+    <resultMap id="group" type="com.taotao.pojo.ItemGroup">
+        <id column="groupId" property="id"/>
+        <result column="groupName" property="groupName"/>
+        <result column="itemCatId" property="itemCatId"/>
+        <collection property="paramKeys" ofType="com.taotao.pojo.ItemGroupKeys">
+            <id column="paramKeyId" property="id"/>
+            <result column="paramName" property="paramName"/>
+            <association property="itemParamValue" javaType="com.taotao.pojo.ItemParamValue">
+                <id column="itemId" property="itemId"/>
+                <result column="paramValue" property="paramValue"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findTbItemGroupByItemId" resultMap="group">
+        SELECT
+            c.id groupId,
+            c.groupName,
+            c.itemCatId,
+            b.id paramKeyId,
+            b.paramName,
+            a.itemId,
+            a.paramValue
+        FROM
+            tbitemparamvalue a
+            INNER JOIN tbitemparamkey b ON a.paramId = b.id
+            INNER JOIN tbitemparamgroup c ON b.groupId = c.id
+        WHERE
+            a.itemId = #{iTid}
+    </select>
+
 </mapper>

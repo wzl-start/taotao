@@ -1,8 +1,10 @@
 package com.taotao.mapper;
 
 
+import com.taotao.pojo.ItemGroup;
 import com.taotao.pojo.SearchItem;
 import com.taotao.pojo.TbItem;
+import com.taotao.pojo.TbItemDesc;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -26,4 +28,10 @@ public interface TbItemMapper {
     List<SearchItem> findSearchItemAll();
 
     SearchItem findSearchItemById(@Param("id") Long id);
+
+    TbItem findItemById(@Param("itemId")Long itemId);
+
+    TbItemDesc findItemDescByItemId(@Param("itemId")Long itemId);
+
+    List<ItemGroup> findTbItemGroupByItemId(@Param("iTid")Long iTid);
 }

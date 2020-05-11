@@ -18,7 +18,7 @@
     </insert>
 
     <select id="findParamGroupId" resultType="com.taotao.pojo.ItemParamGroup">
-        SELECT * FROM tbitemparamgroup WHERE groupName = #{groupName}
+        SELECT * FROM tbitemparamgroup WHERE groupName = #{groupName} AND itemCatId = #{cId}
     </select>
 
     <insert id="addParamKey">

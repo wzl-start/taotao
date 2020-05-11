@@ -5,13 +5,17 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.taotao.constant.OSSConstant;
+import com.taotao.constant.RedisConstant;
 import com.taotao.mapper.TbItemDescMapper;
 import com.taotao.mapper.TbItemGroupMapper;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.mapper.TbItemParamMapper;
 import com.taotao.pojo.*;
 import com.taotao.service.ItemService;
+import com.taotao.service.JedisClient;
 import com.taotao.utils.IDUtils;
+import com.taotao.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -38,6 +42,8 @@ public class ItemServiceImpl implements ItemService {
     private JmsTemplate jmsTemplate;
     @Autowired
     private Destination destination;
+    @Autowired
+    private JedisClient jedisClient;
 
     @Override
     public TbItem findItemById(Long itemId) {
@@ -189,13 +195,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public TaotaoResult addItemGroup(Long cId, String params) {
+
         String[] strings = params.split("clive");
         int s = 0;
         for (int i = 0; i < strings.length; i++) {
             String[] splits = strings[i].split(",");
             String groupName = splits[0];
             s = tbItemGroupMapper.addParamGroup(groupName,cId);
-            ItemParamGroup itemParamGroup = tbItemGroupMapper.findParamGroupId(groupName);
+            ItemParamGroup itemParamGroup = tbItemGroupMapper.findParamGroupId(groupName,cId);
             for (int j = 1; j < splits.length; j++) {
                 String key = splits[j];
                 s = tbItemGroupMapper.addParamKey(key,itemParamGroup.getId());
@@ -205,5 +212,110 @@ public class ItemServiceImpl implements ItemService {
             return TaotaoResult.build(500,"添加规格参数模板失败");
         }
         return TaotaoResult.build(200,"添加规格参数模板成功");
+    }
+
+    @Override
+    public TbItem getItemById(Long itemId) {
+
+        String json = jedisClient.get("RedisConstant.ITEM_INFO");
+        int rand = (int)(Math.random()*1000)+1;
+        //当json不为null 有数据的时候
+        if (StringUtils.isNotBlank(json)){
+            if (json.equals("null")){
+                return null;
+            }else {
+                TbItem tbItem = JsonUtils.jsonToPojo(json,TbItem.class);
+                jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT+rand);
+                return tbItem;
+            }
+        }
+
+        TbItem tbItem = tbItemMapper.findItemById(itemId);
+        if (tbItem==null){
+            jedisClient.set(RedisConstant.ITEM_INFO,"null");
+            jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT);
+        }else {
+            //吧查询数据库得到的结果集存入到redis缓存中
+            jedisClient.set(RedisConstant.ITEM_INFO, JsonUtils.objectToJson(tbItem));
+            jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT+rand);
+        }
+
+        return tbItem;
+    }
+
+    @Override
+    public TbItemDesc getItemDescByItemId(Long itemId) {
+
+        String json = jedisClient.get(RedisConstant.ITEM_DESC);
+        int rand = (int)(Math.random()*1000)+1;
+        //当json不为null 有数据的时候
+        if(StringUtils.isNotBlank(json)){
+            if(json.equals("null")){
+                return null;
+            }else{
+                TbItemDesc itemDesc = JsonUtils.jsonToPojo(json, TbItemDesc.class);
+
+                jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT+rand);
+                return itemDesc;
+            }
+        }
+
+        TbItemDesc tbItemDesc = tbItemMapper.findItemDescByItemId(itemId);
+        if(tbItemDesc==null){
+            jedisClient.set(RedisConstant.ITEM_DESC,"null");
+            jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT);
+        }else {
+            //吧查询数据库得到的结果集存入到redis缓存中
+            jedisClient.set(RedisConstant.ITEM_DESC, JsonUtils.objectToJson(tbItemDesc));
+            jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT+rand);
+        }
+        return tbItemDesc;
+    }
+
+    @Override
+    public String findTbItemGroupByItemId(Long itemId) {
+
+        String json = jedisClient.get(RedisConstant.ITEM_PARAM);
+        int rand = (int)(Math.random()*1000)+1;
+
+        //当json不为null 有数据的时候
+        if(StringUtils.isNotBlank(json)){
+            if(json.equals("null")){
+                return null;
+            }else{
+                String str = JsonUtils.jsonToPojo(json, String.class);
+                jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT+rand);
+                return str;
+            }
+        }
+
+        List<ItemGroup> groups = tbItemMapper.findTbItemGroupByItemId(itemId);
+        StringBuffer sb = new StringBuffer();
+        if(groups==null){
+            jedisClient.set(RedisConstant.ITEM_PARAM,"null");
+            jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT);
+        }else {
+            //吧查询数据库得到的结果集存入到redis缓存中
+            sb.append("<table cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" border=\"0\" class=\"Ptable\">\n");
+            sb.append("    <tbody>\n");
+            for (ItemGroup group:groups) {
+                sb.append("        <tr>\n");
+                sb.append("            <th class=\"tdTitle\" colspan=\"2\">"+group.getGroupName()+"</th>\n");
+                sb.append("        </tr>\n");
+                List<ItemGroupKeys> paramKeys = group.getParamKeys();
+                for (ItemGroupKeys paramKey:paramKeys) {
+                    sb.append("        <tr>\n");
+                    sb.append("            <td class=\"tdTitle\">"+paramKey.getParamName()+"</td>\n");
+                    sb.append("            <td>"+paramKey.getItemParamValue().getParamValue()+"</td>\n");
+                    sb.append("        </tr>\n");
+                }
+            }
+            sb.append("    </tbody>\n");
+            sb.append("</table>");
+            jedisClient.set(RedisConstant.ITEM_PARAM, JsonUtils.objectToJson(sb));
+            jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT+rand);
+        }
+        return sb.toString();
+
     }
 }
