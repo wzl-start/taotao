@@ -17,6 +17,7 @@
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+    <!-- 加载配置文件 -->
     <context:property-placeholder location="classpath:*.properties" />
     <!-- 数据库连接池 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
@@ -76,7 +77,7 @@
     -->
     <!-- 配置单机版的连接 -->
     <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg name="host" value="192.168.175.100"/>
+        <constructor-arg name="host" value="192.168.46.100"/>
         <constructor-arg name="port" value="6379"/>
     </bean>
 
@@ -96,6 +97,5 @@
         2.这个接口的实现类 id
         接口和实现类 有关系了  -->
 
-    <dubbo:service interface="com.taotao.sso.service.UserService" ref="userServiceImpl" />
-
+    <dubbo:service interface="com.taotao.sso.service.UserService" ref="userServiceImpl" timeout="60000"/>
 </beans>
