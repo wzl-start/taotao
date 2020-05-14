@@ -217,7 +217,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public TbItem getItemById(Long itemId) {
 
-        String json = jedisClient.get("RedisConstant.ITEM_INFO");
+        String json = jedisClient.get(RedisConstant.ITEM_INFO +":"+itemId);
         int rand = (int)(Math.random()*1000)+1;
         //当json不为null 有数据的时候
         if (StringUtils.isNotBlank(json)){
@@ -225,19 +225,19 @@ public class ItemServiceImpl implements ItemService {
                 return null;
             }else {
                 TbItem tbItem = JsonUtils.jsonToPojo(json,TbItem.class);
-                jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT+rand);
+                jedisClient.expire(RedisConstant.ITEM_INFO +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
                 return tbItem;
             }
         }
 
         TbItem tbItem = tbItemMapper.findItemById(itemId);
         if (tbItem==null){
-            jedisClient.set(RedisConstant.ITEM_INFO,"null");
-            jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT);
+            jedisClient.set(RedisConstant.ITEM_INFO +":"+itemId,"null");
+            jedisClient.expire(RedisConstant.ITEM_INFO +":"+itemId,RedisConstant.REDIS_TIME_OUT);
         }else {
             //吧查询数据库得到的结果集存入到redis缓存中
-            jedisClient.set(RedisConstant.ITEM_INFO, JsonUtils.objectToJson(tbItem));
-            jedisClient.expire(RedisConstant.ITEM_INFO,RedisConstant.REDIS_TIME_OUT+rand);
+            jedisClient.set(RedisConstant.ITEM_INFO +":"+itemId, JsonUtils.objectToJson(tbItem));
+            jedisClient.expire(RedisConstant.ITEM_INFO +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
         }
 
         return tbItem;
@@ -246,7 +246,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public TbItemDesc getItemDescByItemId(Long itemId) {
 
-        String json = jedisClient.get(RedisConstant.ITEM_DESC);
+        String json = jedisClient.get(RedisConstant.ITEM_DESC +":"+itemId);
         int rand = (int)(Math.random()*1000)+1;
         //当json不为null 有数据的时候
         if(StringUtils.isNotBlank(json)){
@@ -255,19 +255,19 @@ public class ItemServiceImpl implements ItemService {
             }else{
                 TbItemDesc itemDesc = JsonUtils.jsonToPojo(json, TbItemDesc.class);
 
-                jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT+rand);
+                jedisClient.expire(RedisConstant.ITEM_DESC +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
                 return itemDesc;
             }
         }
 
         TbItemDesc tbItemDesc = tbItemMapper.findItemDescByItemId(itemId);
         if(tbItemDesc==null){
-            jedisClient.set(RedisConstant.ITEM_DESC,"null");
-            jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT);
+            jedisClient.set(RedisConstant.ITEM_DESC +":"+itemId,"null");
+            jedisClient.expire(RedisConstant.ITEM_DESC +":"+itemId,RedisConstant.REDIS_TIME_OUT);
         }else {
             //吧查询数据库得到的结果集存入到redis缓存中
-            jedisClient.set(RedisConstant.ITEM_DESC, JsonUtils.objectToJson(tbItemDesc));
-            jedisClient.expire(RedisConstant.ITEM_DESC,RedisConstant.REDIS_TIME_OUT+rand);
+            jedisClient.set(RedisConstant.ITEM_DESC +":"+itemId, JsonUtils.objectToJson(tbItemDesc));
+            jedisClient.expire(RedisConstant.ITEM_DESC +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
         }
         return tbItemDesc;
     }
@@ -275,7 +275,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public String findTbItemGroupByItemId(Long itemId) {
 
-        String json = jedisClient.get(RedisConstant.ITEM_PARAM);
+        String json = jedisClient.get(RedisConstant.ITEM_PARAM +":"+itemId);
         int rand = (int)(Math.random()*1000)+1;
 
         //当json不为null 有数据的时候
@@ -284,7 +284,7 @@ public class ItemServiceImpl implements ItemService {
                 return null;
             }else{
                 String str = JsonUtils.jsonToPojo(json, String.class);
-                jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT+rand);
+                jedisClient.expire(RedisConstant.ITEM_PARAM +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
                 return str;
             }
         }
@@ -292,8 +292,8 @@ public class ItemServiceImpl implements ItemService {
         List<ItemGroup> groups = tbItemMapper.findTbItemGroupByItemId(itemId);
         StringBuffer sb = new StringBuffer();
         if(groups==null){
-            jedisClient.set(RedisConstant.ITEM_PARAM,"null");
-            jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT);
+            jedisClient.set(RedisConstant.ITEM_PARAM +":"+itemId,"null");
+            jedisClient.expire(RedisConstant.ITEM_PARAM +":"+itemId,RedisConstant.REDIS_TIME_OUT);
         }else {
             //吧查询数据库得到的结果集存入到redis缓存中
             sb.append("<table cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" border=\"0\" class=\"Ptable\">\n");
@@ -312,8 +312,8 @@ public class ItemServiceImpl implements ItemService {
             }
             sb.append("    </tbody>\n");
             sb.append("</table>");
-            jedisClient.set(RedisConstant.ITEM_PARAM, JsonUtils.objectToJson(sb));
-            jedisClient.expire(RedisConstant.ITEM_PARAM,RedisConstant.REDIS_TIME_OUT+rand);
+            jedisClient.set(RedisConstant.ITEM_PARAM +":"+itemId, JsonUtils.objectToJson(sb));
+            jedisClient.expire(RedisConstant.ITEM_PARAM +":"+itemId,RedisConstant.REDIS_TIME_OUT+rand);
         }
         return sb.toString();
 
