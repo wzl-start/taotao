@@ -28,7 +28,7 @@ public class CartController {
     @Autowired
     private ItemService itemService;
 
-    @RequestMapping(value = "/add/{itemId}")
+    @RequestMapping("/add/{itemId}")
     public String add(@PathVariable Long itemId, Integer num, HttpServletRequest request, HttpServletResponse response) {
         String tokenValue = CookieUtils.getCookieValue(request, RedisConstant.TT_TOKEN);
         List<TbItem> cartList = new ArrayList<TbItem>();
@@ -66,7 +66,7 @@ public class CartController {
         return "cartSuccess";
     }
 
-    @RequestMapping(value = "{cart}")
+    @RequestMapping("/cart")
     public String showCartList(HttpServletRequest request, Model model) {
         String json = CookieUtils.getCookieValue(request, RedisConstant.TT_CART, true);
         //传递给页面

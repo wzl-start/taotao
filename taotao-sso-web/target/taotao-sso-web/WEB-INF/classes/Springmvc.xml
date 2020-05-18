@@ -30,10 +30,12 @@
     </bean>
 
 
+
+
     <!-- 引用dubbo服务 -->
     <dubbo:application name="taotao-sso-web"/>
     <dubbo:registry protocol="zookeeper" address="192.168.46.100:2181"/>
     <!--接受服务-->
-    <dubbo:reference interface="com.taotao.sso.service.UserService" id="userService" />
+    <dubbo:reference interface="com.taotao.sso.service.UserService" id="userService" timeout="60000"/>
 
 </beans>
